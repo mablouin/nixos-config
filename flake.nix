@@ -18,9 +18,12 @@
         };
       };
 
-      packages.${system}.default = pkgs.writeScriptBin "install" ''
-        echo "flake installed"
-      '';
+      packages.${system} = {
+        default = self.packages.${system}.install;
+        install = pkgs.writeScriptBin "install" ''
+          echo "flake installed"
+        '';
+      }
 
       apps.${system} = {
         default = self.apps.${system}.install;

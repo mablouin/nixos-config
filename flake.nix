@@ -20,10 +20,11 @@
 
       packages.${system} = {
         default = self.packages.${system}.install;
-        install = pkgs.writeScriptBin "install" ''
-          #!${pkgs.bash}/bin/bash
-          echo "flake installed"
-        '';
+        install = pkgs.writeShellApplication {
+            name = "install";
+            runtimeInputs = with pkgs; [ git ];
+            text = ''${./install.sh} "$@"'';
+          };
       };
 
       apps.${system} = {

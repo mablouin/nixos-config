@@ -21,6 +21,7 @@
       packages.${system} = {
         default = self.packages.${system}.install;
         install = pkgs.writeScriptBin "install" ''
+          #!${pkgs.bash}/bin/bash
           echo "flake installed"
         '';
       };

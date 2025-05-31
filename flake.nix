@@ -23,7 +23,7 @@
         install = pkgs.writeScriptBin "install" ''
           echo "flake installed"
         '';
-      }
+      };
 
       apps.${system} = {
         default = self.apps.${system}.install;

@@ -1,9 +1,9 @@
 #!/bin/sh
 
-CONFIG_DIR=~/.config
+CONFIG_DIR=~/.nixos
 
 # Clone config repo
-nix-shell -p git --command "git clone https://gitlab.com/librephoenix/nixos-config $CONFIG_DIR"
+nix-shell -p git --command "git clone https://github.com/mablouin/nixos-config $CONFIG_DIR"
 
 # Rebuild system
 sudo nixos-rebuild switch --flake $CONFIG_DIR;

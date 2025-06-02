@@ -26,6 +26,7 @@
 
   environment.systemPackages = with pkgs; [
     fish
+    git
   ];
 
   # Enable vscode to connect to WSL

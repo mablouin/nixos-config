@@ -6,6 +6,6 @@ CONFIG_DIR=~/.nixos-config
 nix-shell -p git --command "git clone https://github.com/mablouin/nixos-config $CONFIG_DIR"
 
 # Rebuild system
-sudo nixos-rebuild switch --flake $CONFIG_DIR;
+sudo nixos-rebuild switch --flake $CONFIG_DIR --no-write-lock-file;
 
 echo "flake installed"

@@ -3,9 +3,10 @@
 
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-24.11";
+    nixos-wsl.url = "github:nix-community/nixos-wsl";
   };
 
-  outputs = { self, nixpkgs, ... }@inputs:
+  outputs = { self, nixpkgs, nixos-wsl, ... }@inputs:
     let
       lib = nixpkgs.lib;
       system = "x86_64-linux";
@@ -14,7 +15,10 @@
       nixosConfigurations = {
         nixos = lib.nixosSystem {
           system = system;
-          modules = [ ./configuration.nix ];
+          modules = [
+            ./configuration.nix
+            nixos-wsl.nixosModules.wsl
+          ];
         };
       };
 

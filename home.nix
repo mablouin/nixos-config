@@ -3,6 +3,10 @@
 {
   programs.home-manager.enable = true;
 
+  imports = [
+    ./git.user.nix
+  ];
+
   home.packages = (with pkgs; [
     fish
     git

@@ -14,9 +14,14 @@
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   environment.systemPackages = with pkgs; [
+    home-manager
     fish
     git
   ];
+
+  environment.shells = with pkgs; [ fish ];
+  users.defaultUserShell = pkgs.fish;
+  programs.fish.enable = true;
 
   # Enable vscode to connect to WSL
   programs.nix-ld = {
@@ -24,7 +29,7 @@
     package = pkgs.nix-ld-rs;
   };
 
-    # This value determines the NixOS release from which the default
+  # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
   # on your system were taken. It's perfectly fine and recommended to leave
   # this value at the release version of the first install of this system.

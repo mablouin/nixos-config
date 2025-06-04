@@ -4,9 +4,13 @@
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-24.11";
     nixos-wsl.url = "github:nix-community/nixos-wsl";
+    home-manager = {
+      url = "github:nix-community/home-manager/release-24.11";
+      home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    }
   };
 
-  outputs = { self, nixpkgs, nixos-wsl, ... }@inputs:
+  outputs = { self, nixpkgs, nixos-wsl, home-manager, ... }@inputs:
     let
       lib = nixpkgs.lib;
       system = "x86_64-linux";
@@ -14,11 +18,18 @@
     in {
       nixosConfigurations = {
         nixos = lib.nixosSystem {
-          system = system;
+          inherit system;
           modules = [
             ./configuration.nix
             nixos-wsl.nixosModules.wsl
           ];
+        };
+      };
+
+      homeConfigurations = {
+        nixos = home-manager.lib.homeManagerConfiguration {
+          inherit pkgs;
+          modules = [ ./home.nix ];
         };
       };
 

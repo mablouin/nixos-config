@@ -1,2 +1,3 @@
-# contains user data to be filled in
-*.user.nix
+# User data files (created from *.example templates)
+user-config/*.user.nix
+!user-config/*.user.nix.example

@@ -1,26 +1,18 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
+let
+  userConfigDir = ./user-config;
+  files = builtins.attrNames (builtins.readDir userConfigDir);
+  userFiles = builtins.filter (name: (builtins.match ".*\\.user\\.nix$" name) != null) files;
+in
 {
+  imports = map (name: userConfigDir + "/${name}") userFiles;
+
+  home.stateVersion = "24.11";
+
   programs.home-manager.enable = true;
 
-  imports = [
-    ./git.user.nix
+  home.packages = with pkgs; [
+    # Add your packages here
   ];
-
-  home.packages = (with pkgs; [
-    fish
-    git
-  ]);
-
-  programs.fish = {
-    enable = true;
-  };
-
-  # This value determines the NixOS release from which the default
-  # settings for stateful data, like file locations and database versions
-  # on your system were taken. It's perfectly fine and recommended to leave
-  # this value at the release version of the first install of this system.
-  # Before changing this value read the documentation for this option
-  # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  home.stateVersion = "24.11";  # Did you read the comment?
 }

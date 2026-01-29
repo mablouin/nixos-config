@@ -10,14 +10,13 @@
     };
   };
 
-  outputs = { self, nixpkgs, nixos-wsl, home-manager, ... }@inputs:
+  outputs = { self, nixpkgs, nixos-wsl, home-manager, ... }:
     let
-      lib = nixpkgs.lib;
       system = "x86_64-linux";
       pkgs = import nixpkgs { inherit system; };
     in {
       nixosConfigurations = {
-        nixos = lib.nixosSystem {
+        nixos = nixpkgs.lib.nixosSystem {
           inherit system;
           modules = [
             ./configuration.nix
@@ -33,21 +32,15 @@
         };
       };
 
-      packages.${system} = {
-        default = self.packages.${system}.install;
-        install = pkgs.writeShellApplication {
-            name = "install";
-            runtimeInputs = with pkgs; [ git ];
-            text = ''${./install.sh} "$@"'';
-          };
+      packages.${system}.default = pkgs.writeShellApplication {
+        name = "install";
+        runtimeInputs = with pkgs; [ git ];
+        text = builtins.readFile ./install.sh;
       };
 
-      apps.${system} = {
-        default = self.apps.${system}.install;
-        install = {
-          type = "app";
-          program = "${self.packages.${system}.install}/bin/install";
-        };
+      apps.${system}.default = {
+        type = "app";
+        program = "${self.packages.${system}.default}/bin/install";
       };
     };
 }

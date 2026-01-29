@@ -16,7 +16,12 @@ in
   programs.home-manager.enable = true;
 
   home.packages = [
+    pkgs.azure-cli
+    pkgs.go
+    pkgs.k9s
+    pkgs.kubelogin
     pkgs.powershell
+    pkgs.terraform
 
     pkgs-unstable.claude-code
   ];

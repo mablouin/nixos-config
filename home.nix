@@ -15,6 +15,6 @@ in
   programs.home-manager.enable = true;
 
   home.packages = with pkgs; [
-    # Add your packages here
+    claude-code
   ];
 }

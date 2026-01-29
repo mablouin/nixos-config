@@ -4,11 +4,16 @@
   programs.zsh = {
     enable = true;
 
+    # Set ZDOTDIR to follow XDG Base Directory Specification
+    # This moves .zshrc and related files to ~/.config/zsh
+    dotDir = ".config/zsh";
+
     # History configuration for strong history suggestions
     history = {
       size = 50000;
       save = 50000;
-      path = "${config.home.homeDirectory}/.zsh_history";
+      # Move history to XDG data directory
+      path = "${config.xdg.dataHome}/zsh/zsh_history";
       ignoreDups = true;
       ignoreAllDups = true;
       ignoreSpace = true;
@@ -81,9 +86,15 @@
 
     # Additional init commands
     initExtra = ''
+      # Set XDG environment variables (follows XDG Base Directory Specification)
+      export XDG_CONFIG_HOME="''${XDG_CONFIG_HOME:-$HOME/.config}"
+      export XDG_DATA_HOME="''${XDG_DATA_HOME:-$HOME/.local/share}"
+      export XDG_CACHE_HOME="''${XDG_CACHE_HOME:-$HOME/.cache}"
+      export XDG_STATE_HOME="''${XDG_STATE_HOME:-$HOME/.local/state}"
+
       # Ensure oh-my-zsh cache directory is writable
-      if [ -d "$HOME/.cache/oh-my-zsh" ]; then
-        chmod -R u+w "$HOME/.cache/oh-my-zsh" 2>/dev/null || true
+      if [ -d "$XDG_CACHE_HOME/oh-my-zsh" ]; then
+        chmod -R u+w "$XDG_CACHE_HOME/oh-my-zsh" 2>/dev/null || true
       fi
 
       # Better history search with up/down arrows

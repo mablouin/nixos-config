@@ -8,6 +8,7 @@ in
 {
   imports = [
     ./home/zsh.nix
+    ./home/claude.nix
   ] ++ map (name: userConfigDir + "/${name}") userFiles;
 
   home.stateVersion = "24.11";
@@ -15,6 +16,8 @@ in
   programs.home-manager.enable = true;
 
   home.packages = [
+    pkgs.powershell
+
     pkgs-unstable.claude-code
   ];
 }

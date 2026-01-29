@@ -17,8 +17,8 @@
   programs.zsh = {
     enable = true;
     shellAliases = {
-      nixos-switch = "(cd ~/.nixos-config && git add -f user-config/*.user.nix && trap 'git reset user-config/*.user.nix' EXIT && sudo nixos-rebuild switch --flake .#nixos)";
-      home-switch = "(cd ~/.nixos-config && git add -f user-config/*.user.nix && trap 'git reset user-config/*.user.nix' EXIT && home-manager switch --flake .#nixos)";
+      nixos-switch = "(cd ~/.nixos-config && git add -f user-config/*.user.nix && trap 'git reset user-config/*.user.nix' EXIT && sudo nixos-rebuild switch --flake .#nixos --option warn-dirty false)";
+      home-switch = "(cd ~/.nixos-config && git add -f user-config/*.user.nix && trap 'git reset user-config/*.user.nix' EXIT && home-manager switch --flake .#nixos -b backup --option warn-dirty false)";
     };
   };
 

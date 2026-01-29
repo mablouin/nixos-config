@@ -38,11 +38,17 @@ for template in "$USER_CONFIG_DIR"/*.user.nix.example; do
   fi
 done
 
+# Stage user config files so flake can see them (flakes only see git-tracked files)
+git add -f "$USER_CONFIG_DIR"/*.user.nix
+
 # Rebuild system config
 sudo nixos-rebuild switch --flake "$CONFIG_DIR#nixos"
 
 # Apply home-manager config
 home-manager switch --flake "$CONFIG_DIR#nixos"
+
+# Unstage user config files to prevent accidental commits
+git reset "$USER_CONFIG_DIR"/*.user.nix
 
 echo ""
 echo "Installation complete!"

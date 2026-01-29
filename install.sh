@@ -4,9 +4,12 @@ set -e
 CONFIG_DIR=~/.nixos-config
 USER_CONFIG_DIR="$CONFIG_DIR/user-config"
 
+# Branch to clone (can be overridden via argument)
+BRANCH="${1:-main}"
+
 # Clone config repo if not exists
 if [ ! -d "$CONFIG_DIR" ]; then
-  nix-shell -p git --run "git clone https://github.com/mablouin/nixos-config $CONFIG_DIR"
+  nix-shell -p git --run "git clone -b $BRANCH https://github.com/mablouin/nixos-config $CONFIG_DIR"
 fi
 
 cd "$CONFIG_DIR"

@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, pkgs-unstable, lib, ... }:
 
 let
   userConfigDir = ./user-config;
@@ -14,7 +14,7 @@ in
 
   programs.home-manager.enable = true;
 
-  home.packages = with pkgs; [
-    claude-code
+  home.packages = [
+    pkgs-unstable.claude-code
   ];
 }

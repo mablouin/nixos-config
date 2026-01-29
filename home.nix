@@ -22,6 +22,7 @@ in
     pkgs.dotnet-sdk_10
     pkgs.go
     pkgs.k9s
+    pkgs.kubectl
     pkgs.kubelogin
     pkgs.powershell
     pkgs.terraform

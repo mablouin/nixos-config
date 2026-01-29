@@ -17,14 +17,6 @@ in
 
   programs.home-manager.enable = true;
 
-  home.sessionPath = [
-    "$HOME/.dotnet/tools"
-  ];
-
-  home.sessionVariables = {
-    DOTNET_ROOT = "${pkgs.dotnet-sdk_10}/share/dotnet";
-  };
-
   home.packages = [
     pkgs.azure-cli
     pkgs.dotnet-sdk_10

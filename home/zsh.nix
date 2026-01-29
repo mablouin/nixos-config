@@ -81,6 +81,11 @@
 
     # Additional init commands
     initExtra = ''
+      # Ensure oh-my-zsh cache directory is writable
+      if [ -d "$HOME/.cache/oh-my-zsh" ]; then
+        chmod -R u+w "$HOME/.cache/oh-my-zsh" 2>/dev/null || true
+      fi
+
       # Better history search with up/down arrows
       bindkey "^[[A" history-beginning-search-backward
       bindkey "^[[B" history-beginning-search-forward

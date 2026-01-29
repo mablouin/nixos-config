@@ -104,6 +104,9 @@
       # Ctrl+R for reverse history search
       bindkey "^R" history-incremental-search-backward
 
+      # Ctrl+Backspace to delete whole word
+      bindkey '^H' backward-kill-word
+
       # Edit command in editor with Ctrl+E
       autoload -z edit-command-line
       zle -N edit-command-line

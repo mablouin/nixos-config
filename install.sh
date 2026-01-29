@@ -13,7 +13,7 @@ cd "$CONFIG_DIR"
 
 # Prompt for username if home.user.nix doesn't exist
 if [ ! -f "$USER_CONFIG_DIR/home.user.nix" ]; then
-  read -p "Enter your username [$(whoami)]: " username
+  read -rp "Enter your username [$(whoami)]: " username
   username="${username:-$(whoami)}"
 
   cat > "$USER_CONFIG_DIR/home.user.nix" << EOF

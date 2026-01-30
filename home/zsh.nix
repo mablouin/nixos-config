@@ -27,10 +27,10 @@
     syntaxHighlighting.enable = true;
     enableCompletion = true;
 
-    # Oh My Zsh configuration
+    # Oh My Zsh configuration (theme disabled, using Starship instead)
     oh-my-zsh = {
       enable = true;
-      theme = "robbyrussell";
+      theme = ""; # Disabled - using Starship prompt
       plugins = [
         "git"
         "docker"
@@ -128,6 +128,128 @@
       export LESS_TERMCAP_ue=$'\e[0m'
       export LESS_TERMCAP_us=$'\e[1;4;31m'
     '';
+  };
+
+  # Starship prompt
+  programs.starship = {
+    enable = true;
+    enableZshIntegration = true;
+
+    settings = {
+      # Add a newline between prompts for readability
+      add_newline = true;
+
+      # Character symbols
+      character = {
+        success_symbol = "[➜](bold green)";
+        error_symbol = "[➜](bold red)";
+      };
+
+      # Git configuration (enabled by default, customized here)
+      git_branch = {
+        symbol = " ";
+        format = "on [$symbol$branch(:$remote_branch)]($style) ";
+      };
+
+      git_status = {
+        format = "([$all_status$ahead_behind]($style) )";
+        conflicted = "🏳";
+        ahead = "⇡\${count}";
+        behind = "⇣\${count}";
+        diverged = "⇕⇡\${ahead_count}⇣\${behind_count}";
+        up_to_date = "";
+        untracked = "?";
+        stashed = "$";
+        modified = "!";
+        staged = "+";
+        renamed = "»";
+        deleted = "✘";
+      };
+
+      # Kubernetes configuration (disabled by default, enable it here)
+      kubernetes = {
+        disabled = false;
+        format = "on [⛵ $context \\($namespace\\)](cyan) ";
+        # Only show when kubectl config exists
+        detect_files = ["k8s"];
+        detect_extensions = ["yaml" "yml"];
+        detect_folders = [];
+      };
+
+      # Directory configuration
+      directory = {
+        truncation_length = 3;
+        truncate_to_repo = true;
+        format = "[$path]($style)[$read_only]($read_only_style) ";
+      };
+
+      # Show command duration if it takes longer than 2s
+      cmd_duration = {
+        min_time = 2000;
+        format = "took [$duration]($style) ";
+      };
+
+      # Azure configuration (disabled by default to reduce clutter)
+      azure = {
+        disabled = true;
+        format = "on [$symbol($subscription)]($style) ";
+        symbol = "󰠅 ";
+      };
+
+      # Terraform
+      terraform = {
+        disabled = true;
+        format = "[via $symbol$workspace]($style) ";
+      };
+
+      # Docker
+      docker_context = {
+        disabled = true;
+        format = "[via $symbol$context]($style) ";
+      };
+
+      # .NET
+      dotnet = {
+        disabled = false;
+        format = "[via $symbol($version )(🎯 $tfm )]($style)";
+      };
+
+      # Go
+      golang = {
+        disabled = false;
+        format = "[via $symbol($version )]($style)";
+      };
+
+      # Node.js
+      nodejs = {
+        disabled = false;
+        format = "[via $symbol($version )]($style)";
+      };
+
+      # Python
+      python = {
+        disabled = false;
+        format = "[via \${symbol}\${pyenv_prefix}(\${version} )(\\($virtualenv\\) )]($style)";
+      };
+
+      # Rust
+      rust = {
+        disabled = false;
+        format = "[via $symbol($version )]($style)";
+      };
+
+      # Helm
+      helm = {
+        disabled = false;
+        format = "[via $symbol($version )]($style)";
+      };
+
+      # Package version (generic)
+      package = {
+        disabled = false;
+        format = "[is $symbol$version]($style) ";
+      };
+    };
   };
 
   # dircolors for better ls colors

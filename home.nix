@@ -28,5 +28,8 @@ in
     pkgs.terraform
 
     pkgs-unstable.claude-code
+    pkgs-unstable.nodejs_24
+    pkgs-unstable.pre-commit
+    pkgs-unstable.yarn-berry
   ];
 }

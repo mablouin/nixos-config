@@ -189,65 +189,8 @@
         format = "took [$duration]($style) ";
       };
 
-      # Azure configuration (disabled by default to reduce clutter)
       azure = {
         disabled = true;
-        format = "on [$symbol($subscription)]($style) ";
-        symbol = "󰠅 ";
-      };
-
-      # Terraform
-      terraform = {
-        disabled = true;
-        format = "[via $symbol$workspace]($style) ";
-      };
-
-      # Docker
-      docker_context = {
-        disabled = true;
-        format = "[via $symbol$context]($style) ";
-      };
-
-      # .NET
-      dotnet = {
-        disabled = false;
-        format = "[via $symbol($version )(🎯 $tfm )]($style)";
-      };
-
-      # Go
-      golang = {
-        disabled = false;
-        format = "[via $symbol($version )]($style)";
-      };
-
-      # Node.js
-      nodejs = {
-        disabled = false;
-        format = "[via $symbol($version )]($style)";
-      };
-
-      # Python
-      python = {
-        disabled = false;
-        format = "[via \${symbol}\${pyenv_prefix}(\${version} )(\\($virtualenv\\) )]($style)";
-      };
-
-      # Rust
-      rust = {
-        disabled = false;
-        format = "[via $symbol($version )]($style)";
-      };
-
-      # Helm
-      helm = {
-        disabled = false;
-        format = "[via $symbol($version )]($style)";
-      };
-
-      # Package version (generic)
-      package = {
-        disabled = false;
-        format = "[is $symbol$version]($style) ";
       };
     };
   };

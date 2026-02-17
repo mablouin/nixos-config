@@ -24,6 +24,7 @@ in
     pkgs.k9s
     pkgs.kubectl
     pkgs.kubelogin
+    pkgs.kubernetes-helm
     pkgs.powershell
     pkgs.terraform
 

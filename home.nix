@@ -21,6 +21,7 @@ in
     pkgs.azure-cli
     pkgs.dotnet-sdk_10
     pkgs.go
+    pkgs.istioctl
     pkgs.jq
     pkgs.k3d
     pkgs.k9s

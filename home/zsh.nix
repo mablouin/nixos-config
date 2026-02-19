@@ -97,6 +97,9 @@
         chmod -R u+w "$XDG_CACHE_HOME/oh-my-zsh" 2>/dev/null || true
       fi
 
+      # Escape to clear the current command line
+      bindkey '\e' kill-whole-line
+
       # Better history search with up/down arrows
       bindkey "^[[A" history-beginning-search-backward
       bindkey "^[[B" history-beginning-search-forward

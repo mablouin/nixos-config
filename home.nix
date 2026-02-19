@@ -21,6 +21,7 @@ in
     pkgs.azure-cli
     pkgs.dotnet-sdk_10
     pkgs.go
+    pkgs.jq
     pkgs.k3d
     pkgs.k9s
     pkgs.kubectl
@@ -28,6 +29,7 @@ in
     pkgs.kubernetes-helm
     pkgs.powershell
     pkgs.terraform
+    pkgs.yq
 
     pkgs-unstable.claude-code
     pkgs-unstable.nodejs_24

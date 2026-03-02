@@ -35,6 +35,7 @@ in
     pkgs-unstable.claude-code
     pkgs-unstable.nodejs_24
     pkgs-unstable.pre-commit
+    pkgs-unstable.talosctl
     pkgs-unstable.yarn-berry
   ];
 }

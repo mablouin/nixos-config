@@ -29,6 +29,7 @@ in
     pkgs.kubelogin
     pkgs.kubernetes-helm
     pkgs.powershell
+    pkgs.qemu
     pkgs.terraform
     pkgs.yq
 

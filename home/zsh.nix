@@ -6,7 +6,7 @@
 
     # Set ZDOTDIR to follow XDG Base Directory Specification
     # This moves .zshrc and related files to ~/.config/zsh
-    dotDir = ".config/zsh";
+    dotDir = "${config.xdg.configHome}/zsh";
 
     # History configuration for strong history suggestions
     history = {

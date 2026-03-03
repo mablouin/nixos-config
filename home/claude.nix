@@ -19,9 +19,10 @@ let
   '';
 in
 {
-  home.packages = [
-    pkgs-unstable.claude-code
-  ];
+  programs.claude-code = {
+    enable = true;
+    package = pkgs-unstable.claude-code;
+  };
 
   # Configure Claude Code settings
   home.file.".claude/settings.json" = {

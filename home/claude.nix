@@ -22,6 +22,7 @@ in
   # Configure Claude Code settings
   home.file.".claude/settings.json" = {
     text = builtins.toJSON {
+      model = "claude-opus-4-6";
       permissions = {
         additionalDirectories = [
           config.home.homeDirectory

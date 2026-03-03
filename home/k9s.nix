@@ -1,8 +1,9 @@
-{ config, pkgs, lib, ... }:
+{ pkgs-unstable, ... }:
 
 {
   programs.k9s = {
     enable = true;
+    package = pkgs-unstable.k9s;
     views = {
       "views" = {
         "v1/pods" = {

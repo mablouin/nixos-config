@@ -24,7 +24,6 @@ in
     pkgs.istioctl
     pkgs.jq
     pkgs.k3d
-    pkgs.k9s
     pkgs.kubectl
     pkgs.kubelogin
     pkgs.kubernetes-helm

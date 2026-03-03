@@ -28,11 +28,11 @@
     "L+ /usr/bin/whoami - - - - /run/current-system/sw/bin/whoami"
   ];
 
-  # Enable vscode to connect to WSL
-  programs.nix-ld = {
-    enable = true;
-    package = pkgs.nix-ld-rs;
-  };
+  # Re-register WSLInterop binfmt handler so Windows executables work
+  wsl.interop.register = true;
+
+  # Enable nix-ld for dynamically linked binaries (e.g. VSCode Remote Server)
+  programs.nix-ld.enable = true;
 
   system.stateVersion = "24.11";
 }

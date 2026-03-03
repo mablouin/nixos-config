@@ -16,26 +16,4 @@ in
   home.stateVersion = "24.11";
 
   programs.home-manager.enable = true;
-
-  home.packages = [
-    pkgs.azure-cli
-    pkgs.dotnet-sdk_10
-    pkgs.go
-    pkgs.istioctl
-    pkgs.jq
-    pkgs.k3d
-    pkgs.kubectl
-    pkgs.kubelogin
-    pkgs.kubernetes-helm
-    pkgs.powershell
-    pkgs.qemu
-    pkgs.terraform
-    pkgs.yq
-
-    pkgs-unstable.claude-code
-    pkgs-unstable.nodejs_24
-    pkgs-unstable.pre-commit
-    pkgs-unstable.talosctl
-    pkgs-unstable.yarn-berry
-  ];
 }

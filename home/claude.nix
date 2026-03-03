@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, pkgs-unstable, lib, ... }:
 
 let
   # Script to add home directory to trusted projects in ~/.claude.json
@@ -19,6 +19,10 @@ let
   '';
 in
 {
+  home.packages = [
+    pkgs-unstable.claude-code
+  ];
+
   # Configure Claude Code settings
   home.file.".claude/settings.json" = {
     text = builtins.toJSON {

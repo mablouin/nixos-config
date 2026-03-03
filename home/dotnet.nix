@@ -1,6 +1,10 @@
 { config, pkgs, lib, ... }:
 
 {
+  home.packages = [
+    pkgs.dotnet-sdk_10
+  ];
+
   home.sessionPath = [
     "$HOME/.dotnet/tools"
   ];

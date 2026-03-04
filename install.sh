@@ -2,7 +2,7 @@
 set -e
 
 CONFIG_DIR=~/.nixos-config
-USER_CONFIG_DIR="$CONFIG_DIR/user-config"
+USER_CONFIG_DIR="$CONFIG_DIR/home/user-config"
 
 # Branch to clone (can be overridden via argument)
 BRANCH="${1:-main}"

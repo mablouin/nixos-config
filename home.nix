@@ -1,17 +1,21 @@
 { config, pkgs, pkgs-unstable, lib, ... }:
 
 let
-  userConfigDir = ./user-config;
-  userConfigFiles = builtins.attrNames (builtins.readDir userConfigDir);
-  userFiles = builtins.filter (name: (builtins.match ".*\\.user\\.nix$" name) != null) userConfigFiles;
-
-  homeDir = ./home;
-  homeFiles = builtins.attrNames (builtins.readDir homeDir);
-  homeNixFiles = builtins.filter (name: (builtins.match ".*\\.nix$" name) != null) homeFiles;
+  collectNixFilesRecursive = dir:
+    let
+      entries = builtins.readDir dir;
+      process = name: type:
+        if type == "directory" then
+          collectNixFilesRecursive (dir + "/${name}")
+        else if (builtins.match ".*\\.nix$" name) != null then
+          [ (dir + "/${name}") ]
+        else
+          [];
+    in
+    lib.concatLists (lib.mapAttrsToList process entries);
 in
 {
-  imports = map (name: homeDir + "/${name}") homeNixFiles
-    ++ map (name: userConfigDir + "/${name}") userFiles;
+  imports = collectNixFilesRecursive ./home;
 
   home.stateVersion = "24.11";
 

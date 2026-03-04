@@ -13,13 +13,11 @@ nixos-config/
 ├── flake.nix              # Flake definition with nixos and home-manager configs
 ├── flake.lock             # Pinned dependency versions
 ├── configuration.nix      # System-level NixOS configuration
-├── home.nix               # User-level home-manager configuration
+├── home.nix               # Entry point: recursively imports all .nix files from home/
 ├── install.sh             # Bootstrap script run by `nix run`
-└── user-config/           # User-specific configs (gitignored)
-    ├── home.user.nix.example   # Template for username/home directory
-    ├── git.user.nix.example    # Template for git identity
-    ├── home.user.nix           # Created at install (gitignored)
-    └── git.user.nix            # Created at install (gitignored)
+└── home/                  # Modular home-manager .nix files
+    └── user-config/       # Personal/sensitive *.user.nix (gitignored)
+        └── *.user.nix.example  # Templates to get started
 ```
 
 ## Key Concepts
@@ -32,13 +30,19 @@ Home-manager is NOT integrated into NixOS modules. This means:
 - `home-manager switch` applies user config only
 - Two separate commands, but allows home.nix to be portable to non-NixOS systems
 
+### Modular Home Configuration
+
+`home.nix` uses `collectNixFilesRecursive` to auto-import every `.nix` file under `home/`. To add new configuration, create a new `.nix` file in `home/` and it will be picked up automatically.
+
+The flake provides both `pkgs` (stable, nixos-25.11) and `pkgs-unstable` (nixos-unstable) as arguments to all modules.
+
 ### User Config Files (*.user.nix)
 
-Sensitive/personal data is kept in `user-config/*.user.nix` files which are:
+Sensitive/personal data is kept in `home/user-config/*.user.nix` files which are:
 
 - Gitignored to prevent committing personal info
 - Created from `.example` templates during install
-- Auto-imported by `home.nix` using `builtins.readDir`
+- Auto-imported alongside all other `home/` modules via the recursive import
 
 **Important**: Nix flakes only see git-tracked files. The aliases stage these files temporarily during builds, then unstage them.
 
@@ -46,8 +50,8 @@ Sensitive/personal data is kept in `user-config/*.user.nix` files which are:
 
 Defined in `configuration.nix` under `programs.zsh.shellAliases`:
 
-- `nixos-switch` - Rebuild system config (stages user files, builds, unstages)
-- `home-switch` - Rebuild home-manager config (stages user files, builds, unstages)
+- `nixos-switch` - Rebuild system config (stages `home/user-config/*.user.nix`, builds, unstages)
+- `home-switch` - Rebuild home-manager config (stages `home/user-config/*.user.nix`, builds, unstages)
 
 These use `trap ... EXIT` to ensure files are unstaged even if the build fails.
 
@@ -67,30 +71,34 @@ environment.systemPackages = with pkgs; [
 
 ### Adding a new user package
 
-Edit `home.nix`:
+Edit `home/packages.nix`. Use `pkgs` for stable or `pkgs-unstable` for bleeding-edge:
 
 ```nix
-home.packages = with pkgs; [
-  your-package-here
+home.packages = [
+  pkgs.your-package-here
+  pkgs-unstable.some-unstable-package
 ];
+```
+
+### Adding a new home-manager module
+
+Create a new file in `home/` (e.g., `home/mytool.nix`). It will be auto-imported:
+
+```nix
+{ pkgs, ... }:
+
+{
+  programs.mytool = {
+    enable = true;
+  };
+}
 ```
 
 ### Adding a new user config file
 
-1. Create `user-config/something.user.nix.example` with template content
-2. The file will be auto-imported by `home.nix` once `something.user.nix` exists
+1. Create `home/user-config/something.user.nix.example` with template content
+2. The file will be auto-imported once `something.user.nix` exists
 3. Update `install.sh` if special handling is needed
-
-### Configuring programs via home-manager
-
-Edit `home.nix` to add program configurations:
-
-```nix
-programs.zsh = {
-  enable = true;
-  # Add zsh configuration here
-};
-```
 
 ## Bootstrap Command
 

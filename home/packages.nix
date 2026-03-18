@@ -5,6 +5,7 @@
     azure-cli
     go
     istioctl
+    jdk25_headless
     jq
     k3d
     kubectl
@@ -13,6 +14,7 @@
     powershell
     qemu
     terraform
+    unzip
     yq
   ]) ++ (with pkgs-unstable; [
     nodejs_24

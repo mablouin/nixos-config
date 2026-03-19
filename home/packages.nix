@@ -21,5 +21,6 @@
     pre-commit
     talosctl
     yarn-berry
+    zarf
   ]);
 }

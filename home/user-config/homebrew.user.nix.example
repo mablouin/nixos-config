@@ -1,0 +1,9 @@
+{
+  homebrew.taps = {
+    # "owner/tap-name" = "git@github.com:owner/homebrew-tap-name.git";
+  };
+
+  homebrew.brews = [
+    # "formula-name"
+  ];
+}

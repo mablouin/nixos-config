@@ -82,6 +82,11 @@
       kgp = "kubectl get pods";
       kgs = "kubectl get services";
       kgd = "kubectl get deployments";
+
+      # Terraform
+      tf = "terraform";
+      tfi = "terraform init";
+      tfa = "terraform apply";
     };
 
     # Additional init commands

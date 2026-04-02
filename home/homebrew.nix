@@ -99,13 +99,35 @@ let
     runScript = "bash";
   };
 
-  brewRun = pkgs.buildFHSEnv {
-    name = "brew-run";
+  brewRunFHS = pkgs.buildFHSEnv {
+    name = "brew-run-fhs";
     inherit targetPkgs profile;
+    extraBwrapArgs = [
+      "--ro-bind" "/usr/bin" "/host-usr-bin"
+    ];
     runScript = "${pkgs.writeShellScript "brew-exec" ''
+      export PATH="/host-usr-bin:$PATH"
+
+      # WSL .exe interop doesn't work inside bwrap (both use /init).
+      # Override docker config to disable the .exe credential helper.
+      if [ -f "$HOME/.docker/config.json" ] && grep -q '"credsStore"' "$HOME/.docker/config.json"; then
+        export DOCKER_CONFIG="$HOME/.docker-fhs"
+        mkdir -p "$DOCKER_CONFIG"
+        python3 -c "
+import json, sys
+c = json.load(open(sys.argv[1]))
+c.pop('credsStore', None)
+json.dump(c, open(sys.argv[2], 'w'), indent=2)
+" "$HOME/.docker/config.json" "$DOCKER_CONFIG/config.json"
+      fi
+
       exec "$@"
     ''}";
   };
+
+  brewRun = pkgs.writeShellScriptBin "brew-run" ''
+    exec ${brewRunFHS}/bin/brew-run-fhs "$@"
+  '';
 in
 {
   options.homebrew = {

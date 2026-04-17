@@ -14,6 +14,7 @@
     powershell
     qemu
     terraform
+    typescript
     unzip
     yq
   ]) ++ (with pkgs-unstable; [

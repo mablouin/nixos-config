@@ -1,0 +1,33 @@
+{ pkgs, pkgs-unstable, lib, ... }:
+
+let
+  claude = "${pkgs-unstable.claude-code}/bin/claude";
+
+  # Declare desired plugins: "name@marketplace"
+  plugins = [
+    # "superpowers@claude-plugins-official"
+  ];
+
+  installPlugins = pkgs-unstable.writeShellScript "install-claude-plugins" ''
+    export PATH="${pkgs.git}/bin:$PATH"
+    export GIT_TERMINAL_PROMPT=0
+
+    for plugin in ${lib.concatStringsSep " " (map (p: ''"${p}"'') plugins)}; do
+      name="''${plugin%%@*}"
+      if ${claude} plugin list 2>/dev/null | grep -q "$name"; then
+        continue
+      fi
+      ${claude} plugin install --scope user "$plugin" || {
+        echo "Warning: Failed to install Claude plugin $plugin. Will retry next home-switch."
+      }
+    done
+  '';
+in
+{
+  claude.enabledPlugins = plugins;
+
+  home.activation.installClaudePlugins =
+    lib.hm.dag.entryAfter ["writeClaudeSettings"] ''
+      $DRY_RUN_CMD ${installPlugins}
+    '';
+}

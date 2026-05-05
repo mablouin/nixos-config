@@ -2,7 +2,7 @@
 
 let
   settingsJson = builtins.toJSON ({
-    model = "claude-opus-4-7";
+    model = "claude-opus-4-6";
     permissions = {
       additionalDirectories = [
         config.home.homeDirectory

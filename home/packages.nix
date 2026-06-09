@@ -2,7 +2,10 @@
 
 {
   home.packages = (with pkgs; [
-    azure-cli
+    (azure-cli.withExtensions [
+      azure-cli.extensions.azure-devops
+      azure-cli.extensions.amg
+    ])
     go
     istioctl
     jdk25_headless

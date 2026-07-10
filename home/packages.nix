@@ -23,6 +23,7 @@
   ]) ++ (with pkgs-unstable; [
     nodejs_24
     pre-commit
+    rtk
     talosctl
     yarn-berry
     zarf

@@ -2,7 +2,7 @@
 
 let
   settingsJson = builtins.toJSON ({
-    model = "claude-opus-4-6";
+    model = "claude-sonnet-4-6";
     permissions = {
       additionalDirectories = [
         config.home.homeDirectory
@@ -54,6 +54,10 @@ in
 
     home.activation.trustClaudeHomeDirectory = lib.hm.dag.entryAfter ["writeBoundary"] ''
       $DRY_RUN_CMD ${trustHomeDirectory}
+    '';
+
+    home.activation.rtkInit = lib.hm.dag.entryAfter ["writeClaudeSettings"] ''
+      $DRY_RUN_CMD ${pkgs-unstable.rtk}/bin/rtk init -g --auto-patch
     '';
   };
 }

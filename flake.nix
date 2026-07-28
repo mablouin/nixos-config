@@ -4,6 +4,7 @@
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-25.11";
     nixpkgs-unstable.url = "nixpkgs/nixos-unstable";
+    nixpkgs-dotnet.url = "github:NixOS/nixpkgs/25f538306313eae3927264466c70d7001dcea1df";
     nixos-wsl.url = "github:nix-community/nixos-wsl/release-25.11";
     home-manager = {
       url = "github:nix-community/home-manager/release-25.11";
@@ -11,7 +12,7 @@
     };
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, nixos-wsl, home-manager, ... }:
+  outputs = { self, nixpkgs, nixpkgs-unstable, nixpkgs-dotnet, nixos-wsl, home-manager, ... }:
     let
       system = "x86_64-linux";
       pkgs = import nixpkgs {
@@ -19,6 +20,10 @@
         config.allowUnfree = true;
       };
       pkgs-unstable = import nixpkgs-unstable {
+        inherit system;
+        config.allowUnfree = true;
+      };
+      pkgs-dotnet = import nixpkgs-dotnet {
         inherit system;
         config.allowUnfree = true;
       };
@@ -36,7 +41,7 @@
       homeConfigurations = {
         nixos = home-manager.lib.homeManagerConfiguration {
           inherit pkgs;
-          extraSpecialArgs = { inherit pkgs-unstable; };
+          extraSpecialArgs = { inherit pkgs-unstable pkgs-dotnet; };
           modules = [ ./home.nix ];
         };
       };

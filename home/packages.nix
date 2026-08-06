@@ -15,6 +15,7 @@
     kubelogin
     kubernetes-helm
     powershell
+    python3
     qemu
     terraform
     typescript

@@ -7,10 +7,16 @@ let
       additionalDirectories = [
         config.home.homeDirectory
       ];
+    } // lib.optionalAttrs (config.claude.disabledSkills != []) {
+      deny = map (id: "Skill(${id})") config.claude.disabledSkills;
     };
   } // lib.optionalAttrs (config.claude.enabledPlugins != []) {
     enabledPlugins = builtins.listToAttrs (
       map (id: { name = id; value = true; }) config.claude.enabledPlugins
+    );
+  } // lib.optionalAttrs (config.claude.disabledSkills != []) {
+    skillOverrides = builtins.listToAttrs (
+      map (id: { name = id; value = "off"; }) config.claude.disabledSkills
     );
   });
 
@@ -39,6 +45,12 @@ in
       type = lib.types.listOf lib.types.str;
       default = [];
       description = "List of Claude plugin IDs to enable in settings.json";
+    };
+
+    disabledSkills = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [];
+      description = "List of \"plugin:skill\" IDs to disable via permissions.deny and skillOverrides in settings.json";
     };
   };
 

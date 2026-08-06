@@ -1,0 +1,15 @@
+{ ... }:
+
+{
+  # Deploys a custom "command" widget script for ccstatusline
+  # (https://github.com/sirmalloc/ccstatusline). Point ccstatusline's own
+  # widget config at ~/.local/bin/get-mtd-cost.sh (already on PATH via
+  # zsh.user.nix's home.sessionPath).
+  home.file.".local/bin/get-mtd-cost.sh" = {
+    executable = true;
+    text = ''
+      #!/bin/bash
+      echo "hello from ccstatusline"
+    '';
+  };
+}

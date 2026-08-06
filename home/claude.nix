@@ -3,6 +3,10 @@
 let
   settingsJson = builtins.toJSON ({
     model = "claude-sonnet-5";
+    statusLine = {
+      type = "command";
+      command = "ccstatusline";
+    };
     permissions = {
       additionalDirectories = [
         config.home.homeDirectory

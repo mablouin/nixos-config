@@ -1,0 +1,55 @@
+{ config, pkgs, pkgs-unstable, lib, ... }:
+
+let
+  # Fill in your organization's Foundry/Agent-Gateway config here.
+  # See your internal setup guide for the exact provider/model/plugin content.
+  opencodeConfigJson = pkgs.writeText "opencode-foundry-config.json" ''
+    {
+      "$schema": "https://opencode.ai/config.json",
+      "model": "your-provider/your-model",
+      "provider": {}
+    }
+  '';
+
+  foundryAuthPlugin = pkgs.writeText "foundry-auth.js" ''
+    // Auth plugin exchanging a local credential for a bearer token on each request.
+    export const FoundryAuth = async () => ({ auth: {} })
+  '';
+
+  packageJson = pkgs.writeText "opencode-package.json" ''
+    {
+      "dependencies": {}
+    }
+  '';
+
+  authJson = pkgs.writeText "opencode-auth.json" ''
+    {}
+  '';
+
+  npmInstallIfChanged = pkgs.writeShellScript "opencode-foundry-npm-install" ''
+    set -euo pipefail
+    export PATH="${pkgs-unstable.nodejs_24}/bin:$PATH"
+    CONFIG_DIR="${config.xdg.configHome}/opencode"
+    HASH_FILE="${config.xdg.stateHome}/opencode-foundry-package.sha256"
+    NEW_HASH="$(sha256sum "$CONFIG_DIR/package.json" | cut -d' ' -f1)"
+    mkdir -p "$(dirname "$HASH_FILE")"
+    if [ -f "$HASH_FILE" ] && [ "$(cat "$HASH_FILE")" = "$NEW_HASH" ]; then
+      exit 0
+    fi
+    ( cd "$CONFIG_DIR" && npm install )
+    echo "$NEW_HASH" > "$HASH_FILE"
+  '';
+in
+{
+  xdg.configFile = {
+    "opencode/opencode.json".source = opencodeConfigJson;
+    "opencode/plugins/foundry-auth.js".source = foundryAuthPlugin;
+    "opencode/package.json".source = packageJson;
+  };
+
+  xdg.dataFile."opencode/auth.json".source = authJson;
+
+  home.activation.opencodeFoundryNpmInstall = lib.hm.dag.entryAfter ["linkGeneration"] ''
+    $DRY_RUN_CMD ${npmInstallIfChanged}
+  '';
+}

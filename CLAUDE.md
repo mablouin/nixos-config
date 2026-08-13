@@ -55,6 +55,16 @@ Defined in `configuration.nix` under `programs.zsh.shellAliases`:
 
 These use `trap ... EXIT` to ensure files are unstaged even if the build fails.
 
+### Verifying Changes Before Trusting a Build
+
+**Important**: a brand-new file anywhere under `home/` (not just `user-config/`) that hasn't been `git add`ed yet is invisible to `nix build`/`nix eval`/`home-manager switch` — the build succeeds with no error, but silently excludes the new file's config, producing a false-positive "it works" result. This is the same git-tracked-files issue as above, just not covered by the `home-switch`/`nixos-switch` aliases, which only auto-stage `home/user-config/*.nix`.
+
+Before trusting any build result while verifying a change to this repo:
+
+1. Run `git status --short` first.
+2. `git add` (stage only, do not commit) any new/untracked file that's part of the change under test — this includes new files outside `user-config/` (e.g. a new `home/*.nix` module), which the aliases don't stage for you.
+3. `git reset` those paths afterward if a commit wasn't requested.
+
 ## Adding New Configuration
 
 ### Adding a new system package
@@ -165,6 +175,29 @@ WSL routes Windows `.exe` execution through `/init` via binfmt_misc, but `buildF
 - `icu` is required in `targetPkgs` for ArtifactTool (used by engage-cli's download strategy)
 - Homebrew state persists at `/home/linuxbrew/.linuxbrew` across home-switch runs
 - To upgrade formulas, run `brew upgrade`
+
+## OpenCode (home/opencode.nix + home/user-config/opencode-foundry.user.nix)
+
+`home/opencode.nix` fetches the official `opencode-linux-x64.tar.gz` release directly (`pkgs.fetchurl`) instead of using `pkgs`/`pkgs-unstable`'s `opencode` package — see "Why a custom derivation" below. It's a dedicated file (not folded into `packages.nix`) because it carries real build logic (fetchurl + hash + `dontFixup`), not just a package reference. All Genetec Foundry gateway specifics (provider URLs, model list, auth plugin, `auth.json` seed) live in the gitignored `home/user-config/opencode-foundry.user.nix` — see `.example` for the template. Follow the Confluence guide "Agent Gateway - OpenCode" (DEVX-1387627748) if the Foundry setup needs to change.
+
+### Why a custom derivation
+
+Both `pkgs.opencode` (stable) and `pkgs-unstable.opencode` build opencode from source, and the unstable build is currently broken on WSL2: it segfaults on every invocation ([anomalyco/opencode#26846](https://github.com/anomalyco/opencode/issues/26846)). Root cause: the nixpkgs build corrupts the embedded Bun payload's ELF segment order (confirmed via `readelf` — payload segment ends up first instead of last), which breaks Bun's internal offset pointers into its own appended bundle. `patchelf` post-processing is independently unsafe too (breaks even a working release binary a second way). `home/opencode.nix` sidesteps this by fetching the official release tarball unmodified (`dontFixup = true`, no patchelf at all) and relying on `programs.nix-ld.enable` (in `configuration.nix`, originally added for VSCode Remote Server) to supply the interpreter at runtime instead of baking one into the ELF. To upgrade, bump `version` and `sha256` in `home/opencode.nix` (get the hash with `nix-prefetch-url --type sha256 <tarball-url>`) — there's no automatic update path like `pkgs-unstable` gets from `nix flake update`.
+
+If nixpkgs fixes the build upstream, this custom derivation can be dropped in favor of `pkgs-unstable.opencode` (as a plain entry in `packages.nix`) again.
+
+### Why it doesn't use `programs.opencode`
+
+The upstream home-manager module's `settings` option writes to `$XDG_CONFIG_HOME/opencode/config.json`, but OpenCode only reads `opencode.json` (confirmed against opencode.ai/docs/config and anomalyco/opencode#6669) — using that option would silently produce a file OpenCode never loads. The module also has no options for plugin files, `package.json`, or `auth.json` (which lives in the XDG *data* dir, not config). So `opencode-foundry.user.nix` manages `xdg.configFile."opencode/opencode.json"` (and the plugin script, `package.json`) plus `xdg.dataFile."opencode/auth.json"` directly — none of which depend on `programs.opencode.enable`.
+
+### npm install for the auth plugin
+
+The Foundry auth plugin depends on `@opencode-ai/plugin`, installed via `npm install` from `~/.config/opencode`. A `home.activation` script hashes the rendered `package.json` and only re-runs `npm install` when that hash changes, to avoid a registry round-trip on every `home-switch`.
+
+### One-time manual steps (not managed by Nix)
+
+- `az login`, then confirm token minting: `az account get-access-token --resource api://genetec-dev-agent-gateway-default --query accessToken -o tsv`
+- Start with `opencode` from a repo directory
 
 ## Common Tasks
 

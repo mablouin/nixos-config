@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
 let
   # nixpkgs' own opencode build corrupts the embedded Bun payload's segment
@@ -22,7 +22,75 @@ let
       install -Dm755 opencode $out/bin/opencode
     '';
   };
+
+  pluginInstallCommands = lib.concatMapStringsSep "\n" (plugin: let
+    parts = lib.splitString "@" plugin;
+  in
+    if builtins.length parts != 2 then
+      throw "OpenCode marketplace plugin must use plugin@marketplace format: ${plugin}"
+    else let
+      pluginName = builtins.elemAt parts 0;
+      marketplaceName = builtins.elemAt parts 1;
+      marketplaceRoot = builtins.getAttr marketplaceName config.opencode.marketplaces;
+    in ''
+      install_plugin "${marketplaceRoot}" "${pluginName}"
+    '') config.opencode.marketplacePlugins;
+
+  installMarketplaceSkills = pkgs.writeShellScript "install-opencode-marketplace-skills" ''
+    set -eu
+    target="${config.xdg.configHome}/opencode/skills"
+    state="${config.xdg.stateHome}/opencode/marketplace-skills"
+
+    mkdir -p "$target"
+    mkdir -p "$(dirname "$state")"
+
+    if [ -f "$state" ]; then
+      while IFS= read -r skill; do
+        rm -f "$target/$skill"
+      done < "$state"
+    fi
+    : > "$state"
+
+    install_plugin() {
+      marketplace="$1"
+      plugin="$2"
+      plugin_dir="$(find "$marketplace/plugins" -type d -name "$plugin" -print -quit)"
+
+      if [ -z "$plugin_dir" ] || [ ! -d "$plugin_dir/skills" ]; then
+        printf 'OpenCode marketplace plugin has no skills directory: %s@%s\n' "$plugin" "$marketplace" >&2
+        exit 1
+      fi
+
+      for skill_dir in "$plugin_dir"/skills/*; do
+        [ -f "$skill_dir/SKILL.md" ] || continue
+        skill="$(basename "$skill_dir")"
+        ln -sfnT "$skill_dir" "$target/$skill"
+        printf '%s\n' "$skill" >> "$state"
+      done
+    }
+
+    ${pluginInstallCommands}
+  '';
 in
 {
-  home.packages = [ opencode ];
+  options.opencode = {
+    marketplaces = lib.mkOption {
+      type = lib.types.attrsOf lib.types.str;
+      default = {};
+      description = "Named local AI marketplace checkouts.";
+    };
+
+    marketplacePlugins = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [];
+      description = "Marketplace plugins using the plugin@marketplace format.";
+    };
+  };
+
+  config = {
+    home.packages = [ opencode ];
+    home.activation.opencodeMarketplaceSkills = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      $DRY_RUN_CMD ${installMarketplaceSkills}
+    '';
+  };
 }

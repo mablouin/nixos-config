@@ -1,0 +1,11 @@
+{ ... }:
+
+{
+  opencode.marketplaces = {
+    # marketplace-name = "/path/to/local/marketplace";
+  };
+
+  opencode.marketplacePlugins = [
+    # "plugin-name@marketplace-name"
+  ];
+}

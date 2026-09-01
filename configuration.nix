@@ -1,8 +1,15 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, pkgs-unstable, ... }:
 
 {
   wsl.enable = true;
   wsl.defaultUser = "nixos";
+
+  # nixos-25.11's docker package is marked insecure; use unstable's, matching
+  # the same workaround already used for the docker CLI in home/packages.nix.
+  virtualisation.docker = {
+    enable = true;
+    package = pkgs-unstable.docker;
+  };
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 

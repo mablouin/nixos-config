@@ -26,6 +26,7 @@
       nixosConfigurations = {
         nixos = nixpkgs.lib.nixosSystem {
           inherit system;
+          specialArgs = { inherit pkgs-unstable; };
           modules = [
             ./configuration.nix
             nixos-wsl.nixosModules.wsl

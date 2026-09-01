@@ -22,6 +22,7 @@
     unzip
     yq
   ]) ++ (with pkgs-unstable; [
+    docker
     nodejs_24
     pre-commit
     rtk

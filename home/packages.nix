@@ -23,6 +23,7 @@
     yq
   ]) ++ (with pkgs-unstable; [
     docker
+    golangci-lint
     nodejs_24
     pre-commit
     rtk
